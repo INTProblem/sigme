@@ -1,6 +1,10 @@
 package DAO;
 
+
 import modelo.*;
+import modelo.OrdenTrabajo;
+import modelo.EstadoOrden;
+import modelo.Fecha;
 import DataBase.Conexion;
 
 import java.sql.*;
@@ -62,3 +66,28 @@ public class OrdenTrabajoDAO {
         }
     }
 }
+
+    /*
+    public List<Nota> obtenerTodas() {
+        List<Nota> notas = new ArrayList<>();
+        String sql = "SELECT * FROM notas";
+        try (Connection conn = Conexion.getConexion(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                Nota nota = new Nota(
+                    rs.getInt("id"),
+                    rs.getString("descripcion"),
+                    rs.getString("area"),
+                    rs.getString("firmante"),
+                    rs.getString("mail"),
+                    rs.getString("tecnicoAsignado"),
+                    rs.getTimestamp("fecha").toLocalDateTime(),
+                    rs.getBoolean("justificada")
+                );
+                notas.add(nota);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return notas;
+    }
+    */

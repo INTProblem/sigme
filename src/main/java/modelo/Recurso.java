@@ -3,6 +3,15 @@ package modelo;
 public class Recurso {
     private String nombre;
     private int cantidadDisponible;
+    private String descripcionRecurso;
+
+    public String getDescripcionRecurso() {
+        return descripcionRecurso;
+    }
+
+    public void setDescripcionRecurso(String descripcionRecurso) {
+        this.descripcionRecurso = descripcionRecurso;
+    }
 
     public String getNombre() {
         return nombre;
@@ -23,6 +32,12 @@ public class Recurso {
     public Recurso(String nombre, int cantidadDisponible) {
         this.nombre = nombre;
         this.cantidadDisponible = cantidadDisponible;
+    }
+
+    public Recurso(String nombre, int cantidadDisponible, String descripcionRecurso) {
+        this.nombre = nombre;
+        this.cantidadDisponible = cantidadDisponible;
+        this.descripcionRecurso = descripcionRecurso;
     }
 
     public Recurso() {

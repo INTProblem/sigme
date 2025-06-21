@@ -1,0 +1,48 @@
+-- Crear base de datos
+CREATE DATABASE IF NOT EXISTS sigme;
+USE sigme;
+
+-- Tabla de usuarios
+CREATE TABLE IF NOT EXISTS usuarios (
+    username VARCHAR(50) PRIMARY KEY,
+    password VARCHAR(100) NOT NULL,
+    rol ENUM('ADMINISTRADOR', 'RESPONSABLE', 'SUPERVISOR') NOT NULL
+);
+
+-- Tabla de notas
+CREATE TABLE IF NOT EXISTS notas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    descripcion TEXT NOT NULL,
+    area VARCHAR(100) NOT NULL,
+    firmante VARCHAR(100) NOT NULL,
+    mail VARCHAR(100) NOT NULL,
+    tecnicoAsignado VARCHAR(100),
+    fecha DATETIME NOT NULL,
+    justificada BOOLEAN NOT NULL
+);
+
+-- Tabla de órdenes de trabajo
+CREATE TABLE IF NOT EXISTS orden_trabajo (
+    numero INT AUTO_INCREMENT PRIMARY KEY,
+    numeroTramite INT NOT NULL,
+    prioridad ENUM('Alta', 'Media', 'Baja') NOT NULL,
+    estado ENUM('EVALUACION', 'DERIVADO', 'EN_PROCESO', 'FINALIZADO', 'CANCELADO', 'NO_SOLUCIONABLE') NOT NULL,
+    responsable VARCHAR(100) NOT NULL,
+    tecnicoAsignado VARCHAR(100),
+    recurso VARCHAR(100),
+    fechaAsignacion DATE,
+    fechaFinalizacion DATE
+);
+
+-- Tabla de Recursos
+CREATE TABLE IF NOT EXISTS recurso (
+    idRecurso INT AUTO_INCREMENT PRIMARY KEY,
+    nombreRecurso VARCHAR(100),
+    descripcionRecurso VARCHAR(1000)
+);
+
+-- Insertar usuarios de prueba
+INSERT INTO usuarios (username, password, rol) VALUES
+('admin', 'admin123', 'ADMINISTRADOR'),
+('zapella', 'prof123', 'RESPONSABLE'),
+('perez', 'sup123', 'SUPERVISOR');
