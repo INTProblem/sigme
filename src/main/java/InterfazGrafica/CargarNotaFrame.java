@@ -1,4 +1,3 @@
-
 package InterfazGrafica;
 
 import DAO.NotaDAO;
@@ -51,12 +50,20 @@ public class CargarNotaFrame extends JFrame {
             LocalDateTime.now(),
             justificadaBox.isSelected()
         );
-
-        NotaDAO dao = new NotaDAO();
-        dao.insertarNota(nota);
-
-        JOptionPane.showMessageDialog(this, "Nota guardada exitosamente.");
-        dispose();
+        if(nota.getArea().isEmpty() == true || 
+                nota.getArea().isEmpty() == true || 
+                nota.getFirmante().isEmpty() == true || 
+                nota.getMail().isEmpty() == true || 
+                nota.getTecnicoAsignado().isEmpty() == true
+                ){
+            JOptionPane.showMessageDialog(this, "Error en los datos cargados. Cargue correctamente los datos.");
+        }else{
+            NotaDAO dao = new NotaDAO();
+            dao.insertarNota(nota);
+            JOptionPane.showMessageDialog(this, "Nota guardada exitosamente.");
+            dispose();
+        }
+        
     }
 }
 
