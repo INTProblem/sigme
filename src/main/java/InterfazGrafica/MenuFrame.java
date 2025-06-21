@@ -20,9 +20,10 @@ public class MenuFrame extends JFrame {
         cargarNotaBtn.addActionListener(e -> new CargarNotaFrame());
         add(cargarNotaBtn);
         
+        
         JButton leerNotaBtn = new JButton("Leer Notas");
-        leerNotaBtn.addActionListener(e -> new LeerNotaFrame());
-        add(leerNotaBtn);
+        //leerNotaBtn.addActionListener(e -> new LeerNotaFrame());
+        //add(leerNotaBtn);
 
         // Otros botones según el rol podrían ir aquí
 

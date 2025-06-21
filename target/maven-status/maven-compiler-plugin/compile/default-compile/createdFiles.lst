@@ -9,7 +9,6 @@ modelo\Fecha.class
 modelo\Recurso.class
 modelo\OrdenTrabajo.class
 modelo\Tecnico.class
-InterfazGrafica\LeerNotaFrame.class
 modelo\Nota.class
 Servicios\EmailService.class
 Controlador\OrdenTrabajoController.class

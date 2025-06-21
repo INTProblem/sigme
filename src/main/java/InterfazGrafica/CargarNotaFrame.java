@@ -15,7 +15,7 @@ public class CargarNotaFrame extends JFrame {
 
     public CargarNotaFrame() {
         setTitle("Cargar Nota");
-        setSize(400, 400);
+        setSize(800, 400);
         setLayout(new GridLayout(7, 2));
         setLocationRelativeTo(null);
 
