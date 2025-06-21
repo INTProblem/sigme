@@ -26,7 +26,7 @@ public class Nota {
     }
 
     public Nota() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
     }
 
     public int getId() {
@@ -92,5 +92,10 @@ public class Nota {
     public void setJustificada(boolean justificada) {
         this.justificada = justificada;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Nota (" + firmante + ")";
+    }
 }
+

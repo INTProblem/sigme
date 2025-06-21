@@ -19,13 +19,14 @@ public class MenuFrame extends JFrame {
         JButton cargarNotaBtn = new JButton("Cargar Nota");
         cargarNotaBtn.addActionListener(e -> new CargarNotaFrame());
         add(cargarNotaBtn);
-        
-        
-        JButton leerNotaBtn = new JButton("Leer Notas");
-        leerNotaBtn.addActionListener(e -> new LeerNotaFrame());
-        add(leerNotaBtn);
 
-        // Otros botones según el rol podrían ir aquí
+        JButton generarOTBtn = new JButton("Generar OT desde Nota");
+        generarOTBtn.addActionListener(e -> new GenerarOTFrame());
+        add(generarOTBtn);
+
+        JButton gestionarOTBtn = new JButton("Gestionar Órdenes de Trabajo");
+        gestionarOTBtn.addActionListener(e -> new GestionarOTFrame());
+        add(gestionarOTBtn);
 
         setVisible(true);
     }
