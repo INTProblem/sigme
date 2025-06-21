@@ -2,7 +2,11 @@ package DAO;
 import DataBase.Conexion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import modelo.Recurso;
 
 public class RecursoDAO {
@@ -22,7 +26,53 @@ public class RecursoDAO {
         }
     }
     
+    public List<Recurso> listarRecursos(){
+        List<Recurso> resultado = new ArrayList<>();
+        String sql = "SELECT * FROM recurso";
+        try (Connection con = Conexion.getConexion();
+                Statement stmt = con.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)){
+            
+            while(rs.next()){
+                Recurso rec = new Recurso(
+                        rs.getString("nombre"),
+                        rs.getString("descripcionRecurso"),
+                        rs.getInt("cantidadDisponible")
+                );
+                resultado.add(rec);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return resultado;
+    }
 }
+
+/*
+public List<Nota> obtenerTodas() {
+        List<Nota> notas = new ArrayList<>();
+        String sql = "SELECT * FROM notas";
+        try (Connection conn = Conexion.getConexion(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                Nota nota = new Nota(
+                    rs.getInt("id"),
+                    rs.getString("descripcion"),
+                    rs.getString("area"),
+                    rs.getString("firmante"),
+                    rs.getString("mail"),
+                    rs.getString("tecnicoAsignado"),
+                    rs.getTimestamp("fecha").toLocalDateTime(),
+                    rs.getBoolean("justificada")
+                );
+                notas.add(nota);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return notas;
+    }
+*/
+
 
 /*
 public void insertarNota(Nota nota) {

@@ -34,10 +34,11 @@ public class Recurso {
         this.cantidadDisponible = cantidadDisponible;
     }
 
-    public Recurso(String nombre, int cantidadDisponible, String descripcionRecurso) {
+    public Recurso(String nombre,  String descripcionRecurso, int cantidadDisponible) {
         this.nombre = nombre;
-        this.cantidadDisponible = cantidadDisponible;
         this.descripcionRecurso = descripcionRecurso;
+        this.cantidadDisponible = cantidadDisponible;
+
     }
 
     public Recurso() {
