@@ -57,6 +57,8 @@ public class CargarNotaFrame extends JFrame {
                 nota.getTecnicoAsignado().isEmpty() == true
                 ){
             JOptionPane.showMessageDialog(this, "Error en los datos cargados. Cargue correctamente los datos.");
+        }else if(nota.isJustificada() == false){
+            JOptionPane.showMessageDialog(this, "La nota no está justificada; no se guardará en el sistema.");
         }else{
             NotaDAO dao = new NotaDAO();
             dao.insertarNota(nota);
