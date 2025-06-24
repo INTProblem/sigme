@@ -51,7 +51,6 @@ public class CargarNotaFrame extends JFrame {
             justificadaBox.isSelected()
         );
         if(nota.getArea().isEmpty() == true || 
-                nota.getArea().isEmpty() == true || 
                 nota.getFirmante().isEmpty() == true || 
                 nota.getMail().isEmpty() == true || 
                 nota.getTecnicoAsignado().isEmpty() == true

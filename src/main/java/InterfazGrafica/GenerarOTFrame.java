@@ -9,12 +9,12 @@ import java.util.List;
 
 public class GenerarOTFrame extends JFrame {
     private JComboBox<Nota> notaCombo;
-    private JTextField prioridadField, recursoField;
+    private JTextField prioridadField, problemaField;
 
     public GenerarOTFrame() {
         setTitle("Generar OT desde Nota");
-        setSize(400, 200);
-        setLayout(new GridLayout(4, 2));
+        setSize(600, 300);
+        setLayout(new GridLayout(8, 2));
         setLocationRelativeTo(null);
 
         NotaDAO notaDAO = new NotaDAO();
@@ -28,22 +28,27 @@ public class GenerarOTFrame extends JFrame {
         }
 
         prioridadField = new JTextField();
-        recursoField = new JTextField();
+        problemaField = new JTextField();
 
         add(new JLabel("Seleccionar Nota Justificada:"));
         add(notaCombo);
         add(new JLabel("Prioridad (Alta/Media/Baja):"));
         add(prioridadField);
-        add(new JLabel("Recurso asociado:"));
-        add(recursoField);
+        add(new JLabel("Problema asociado:"));
+        add(problemaField);
 
         JButton generarBtn = new JButton("Generar OT");
         generarBtn.addActionListener(e -> generarOT());
         add(generarBtn);
-
+        notaCombo.addActionListener(e -> mostrarInfo());
         setVisible(true);
     }
 
+    private void mostrarInfo(){
+        Nota nota = (Nota) notaCombo.getSelectedItem();
+        problemaField.setText(nota.getDescripcion());
+    }
+    
     private void generarOT() {
         Nota nota = (Nota) notaCombo.getSelectedItem();
         if (nota == null) {
@@ -58,7 +63,7 @@ public class GenerarOTFrame extends JFrame {
             EstadoOrden.EVALUACION,
             nota.getFirmante(),
             new Tecnico(nota.getTecnicoAsignado()),
-            recursoField.getText(),
+            problemaField.getText(),
             LocalDate.now(),
             null
         );
