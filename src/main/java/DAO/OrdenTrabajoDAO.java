@@ -65,6 +65,20 @@ public class OrdenTrabajoDAO {
             e.printStackTrace();
         }
     }
+    public void eliminarFinalizadasOCanceladas() {
+    String sql = "DELETE FROM orden_trabajo WHERE estado = ? OR estado = ?";
+    try (Connection conn = Conexion.getConexion();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setString(1, EstadoOrden.FINALIZADO.name());
+        stmt.setString(2, EstadoOrden.CANCELADO.name());
+
+        stmt.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
 }
 
     /*

@@ -65,6 +65,10 @@ public class GestionarOTFrame extends JFrame {
         JButton cancelarBtn = new JButton("Cancelar OT");
         cancelarBtn.addActionListener(e -> cambiarEstadoSeleccionado(EstadoOrden.CANCELADO));
         bottomPanel.add(cancelarBtn);
+        
+        JButton eliminarCerradasBtn = new JButton("Eliminar OTs FINALIZADAS o CANCELADAS");
+        eliminarCerradasBtn.addActionListener(e -> eliminarOTsCerradas());
+        bottomPanel.add(eliminarCerradasBtn);
 
         add(bottomPanel, BorderLayout.SOUTH);
         cargarOTs();
@@ -125,4 +129,13 @@ public class GestionarOTFrame extends JFrame {
         cargarOTs();
         JOptionPane.showMessageDialog(this, "Estado actualizado a " + nuevoEstado.name());
     }
+    
+    private void eliminarOTsCerradas() {
+        int confirm = JOptionPane.showConfirmDialog(this, "¿Desea eliminar todas las OTs FINALIZADAS o CANCELADAS?", "Confirmar", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            otDAO.eliminarFinalizadasOCanceladas();
+            cargarOTs();
+            JOptionPane.showMessageDialog(this, "Órdenes finalizadas o canceladas eliminadas.");
+        }
+}
 }
