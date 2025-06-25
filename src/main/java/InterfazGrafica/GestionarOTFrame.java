@@ -2,7 +2,6 @@ package InterfazGrafica;
 
 import DAO.OrdenTrabajoDAO;
 import modelo.*;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -54,6 +53,7 @@ public class GestionarOTFrame extends JFrame {
 
         JPanel bottomPanel = new JPanel();
 
+/*        
         JButton enProcesoBtn = new JButton("Marcar como EN PROCESO");
         enProcesoBtn.addActionListener(e -> cambiarEstadoSeleccionado(EstadoOrden.EN_PROCESO));
         bottomPanel.add(enProcesoBtn);
@@ -65,8 +65,13 @@ public class GestionarOTFrame extends JFrame {
         JButton cancelarBtn = new JButton("Cancelar OT");
         cancelarBtn.addActionListener(e -> cambiarEstadoSeleccionado(EstadoOrden.CANCELADO));
         bottomPanel.add(cancelarBtn);
-        
-        JButton eliminarCerradasBtn = new JButton("Eliminar OTs FINALIZADAS o CANCELADAS");
+*/
+
+        JButton modificarOTsBtn = new JButton("Modificar OTs");
+        modificarOTsBtn.addActionListener(e -> new ModificarOTFrame());
+        bottomPanel.add(modificarOTsBtn);
+
+        JButton eliminarCerradasBtn = new JButton("Eliminar OTs");
         eliminarCerradasBtn.addActionListener(e -> eliminarOTsCerradas());
         bottomPanel.add(eliminarCerradasBtn);
 
@@ -137,5 +142,5 @@ public class GestionarOTFrame extends JFrame {
             cargarOTs();
             JOptionPane.showMessageDialog(this, "Órdenes finalizadas o canceladas eliminadas.");
         }
-}
+    }
 }
