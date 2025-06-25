@@ -44,7 +44,7 @@ public class GestionarOTFrame extends JFrame {
         tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(new Object[]{
             "N° OT", "Trámite", "Prioridad", "Estado", "Responsable",
-            "Técnico", "Recurso", "Asignación", "Finalización"
+            "Técnico", "Problema", "Asignación", "Finalización"
         });
 
         table = new JTable(tableModel);

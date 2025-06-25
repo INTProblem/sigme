@@ -8,7 +8,7 @@ import java.awt.*;
 import java.time.LocalDateTime;
 
 public class CargarNotaFrame extends JFrame {
-    private JTextField areaField, firmanteField, mailField, tecnicoField;
+    private JTextField areaField, firmanteField, mailField;
     private JTextArea descripcionArea;
     private JCheckBox justificadaBox;
 
@@ -21,14 +21,12 @@ public class CargarNotaFrame extends JFrame {
         areaField = new JTextField();
         firmanteField = new JTextField();
         mailField = new JTextField();
-        tecnicoField = new JTextField();
         descripcionArea = new JTextArea(3, 20);
         justificadaBox = new JCheckBox("Justificada");
 
         add(new JLabel("Área:")); add(areaField);
         add(new JLabel("Firmante:")); add(firmanteField);
         add(new JLabel("Correo electrónico:")); add(mailField);
-        add(new JLabel("Técnico asignado:")); add(tecnicoField);
         add(new JLabel("Descripción:")); add(new JScrollPane(descripcionArea));
         add(justificadaBox); add(new JLabel());
 
@@ -46,14 +44,12 @@ public class CargarNotaFrame extends JFrame {
             areaField.getText(),
             firmanteField.getText(),
             mailField.getText(),
-            tecnicoField.getText(),
             LocalDateTime.now(),
             justificadaBox.isSelected()
         );
         if(nota.getArea().isEmpty() == true || 
                 nota.getFirmante().isEmpty() == true || 
-                nota.getMail().isEmpty() == true || 
-                nota.getTecnicoAsignado().isEmpty() == true
+                nota.getMail().isEmpty() == true  
                 ){
             JOptionPane.showMessageDialog(this, "Error en los datos cargados. Cargue correctamente los datos.");
         }else if(nota.isJustificada() == false){

@@ -7,18 +7,15 @@ public class Nota {
     private String area;
     private String firmante;
     private String mail;
-    private String tecnicoAsignado;
     private LocalDateTime fecha;
     private boolean justificada;
 
-    public Nota(int id, String descripcion, String area, String firmante, String mail,
-                String tecnicoAsignado, LocalDateTime fecha, boolean justificada) {
+    public Nota(int id, String descripcion, String area, String firmante, String mail, LocalDateTime fecha, boolean justificada) {
         this.id = id;
         this.descripcion = descripcion;
         this.area = area;
         this.firmante = firmante;
         this.mail = mail;
-        this.tecnicoAsignado = tecnicoAsignado;
         this.fecha = fecha;
         this.justificada = justificada;
         
@@ -67,14 +64,6 @@ public class Nota {
 
     public void setMail(String mail) {
         this.mail = mail;
-    }
-
-    public String getTecnicoAsignado() {
-        return tecnicoAsignado;
-    }
-
-    public void setTecnicoAsignado(String tecnicoAsignado) {
-        this.tecnicoAsignado = tecnicoAsignado;
     }
 
     public LocalDateTime getFecha() {

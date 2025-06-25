@@ -2,15 +2,24 @@ package modelo;
 
 public class Tecnico {
     private String nombre;
-    private int Legajo;
+    private String mail;
 
-    public int getLegajo() {
-        return Legajo;
+    public String getMail() {
+        return mail;
     }
 
-    public void setLegajo(int Legajo) {
-        this.Legajo = Legajo;
+    public void setMail(String mail) {
+        this.mail = mail;
     }
+
+    public Tecnico(String nombre, String mail) {
+        this.nombre = nombre;
+        this.mail = mail;
+    }
+
+    public Tecnico() {
+    }
+    
     
 
     public Tecnico(String nombre) {

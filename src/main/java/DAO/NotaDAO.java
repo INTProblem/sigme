@@ -8,15 +8,14 @@ import java.util.List;
 
 public class NotaDAO {
     public void insertarNota(Nota nota) {
-        String sql = "INSERT INTO notas (descripcion, area, firmante, mail, tecnicoAsignado, fecha, justificada) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO notas (descripcion, area, firmante, mail, fecha, justificada) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = Conexion.getConexion(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nota.getDescripcion());
             stmt.setString(2, nota.getArea());
             stmt.setString(3, nota.getFirmante());
             stmt.setString(4, nota.getMail());
-            stmt.setString(5, nota.getTecnicoAsignado());
-            stmt.setTimestamp(6, Timestamp.valueOf(nota.getFecha()));
-            stmt.setBoolean(7, nota.isJustificada());
+            stmt.setTimestamp(5, Timestamp.valueOf(nota.getFecha()));
+            stmt.setBoolean(6, nota.isJustificada());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -34,7 +33,6 @@ public class NotaDAO {
                     rs.getString("area"),
                     rs.getString("firmante"),
                     rs.getString("mail"),
-                    rs.getString("tecnicoAsignado"),
                     rs.getTimestamp("fecha").toLocalDateTime(),
                     rs.getBoolean("justificada")
                 );
