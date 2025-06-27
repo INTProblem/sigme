@@ -20,11 +20,19 @@ public class GenerarOTFrame extends JFrame {
         setLocationRelativeTo(null);
 
         NotaDAO notaDAO = new NotaDAO();
+        OrdenTrabajoDAO otDAO = new OrdenTrabajoDAO();
         List<Nota> notas = notaDAO.obtenerTodas();
 
         notaCombo = new JComboBox<>();
         for (Nota nota : notas) {
-            if (nota.isJustificada()) {
+            /*
+            Si la nota está justificada,
+            y si la nota no tiene una OT relacionada a ella.
+            
+            Quiere decir que si busco en la BD por una OT con el ID de nota, no debería aparecer.
+            
+            */
+            if (nota.isJustificada() && otDAO.obtenerPorNumeroTramite(nota.getId()) == null) {
                 notaCombo.addItem(nota);
             }
         }

@@ -117,32 +117,54 @@ public class GestionarOTFrame extends JFrame {
         }
 
         int numeroOT = (int) tableModel.getValueAt(fila, 0);
+        
         String prioridad = (String) tableModel.getValueAt(fila, 2);
         String tecnico = (String) tableModel.getValueAt(fila, 5);
         String recurso = (String) tableModel.getValueAt(fila, 7);
 
-        JPanel panel = new JPanel(new GridLayout(4, 2));
-        JTextField prioridadField = new JTextField(prioridad);
+        JPanel panel = new JPanel(new GridLayout(5, 2));
+        JComboBox prioridadCombo = new JComboBox();
+        prioridadCombo.addItem("Alta");
+        prioridadCombo.addItem("Media");
+        prioridadCombo.addItem("Baja");
+        prioridadCombo.setSelectedItem(prioridad);
         JComboBox<EstadoOrden> estadoCombo = new JComboBox<>(EstadoOrden.values());
         estadoCombo.setSelectedItem(EstadoOrden.valueOf(estadoActual));
         JTextField tecnicoField = new JTextField(tecnico);
+        
+        OrdenTrabajo ot = otDAO.obtenerPorNumero(numeroOT);
+        JTextField tecnicomailField = new JTextField(ot.getTecnicoAsignado().getMail());
         JTextField recursoField = new JTextField(recurso);
 
         panel.add(new JLabel("Nueva prioridad:"));
-        panel.add(prioridadField);
+        panel.add(prioridadCombo);
         panel.add(new JLabel("Nuevo estado:"));
         panel.add(estadoCombo);
         panel.add(new JLabel("Técnico asignado:"));
         panel.add(tecnicoField);
+        panel.add(new JLabel("Mail del técnico:"));
+        panel.add(tecnicomailField);
         panel.add(new JLabel("Recurso asignado:"));
         panel.add(recursoField);
 
         int confirm = JOptionPane.showConfirmDialog(this, panel, "Modificar Orden de Trabajo", JOptionPane.OK_CANCEL_OPTION);
         if (confirm == JOptionPane.OK_OPTION) {
-            OrdenTrabajo ot = otDAO.obtenerPorNumero(numeroOT);
-            ot.setPrioridad(prioridadField.getText());
+            /*
+                Si el nombre viejo y el nombre nuevo son iguales, pero los mails son distintos,
+                o si bien los mails son iguales pero los nombres son distintos,
+                no hay que permitir avanzar, puesto que hay que relacionar el nombre con el mail correctamente.
+            */
+            if((ot.getTecnicoAsignado().getNombre().equals(tecnicoField.getText()) &&
+                    !(ot.getTecnicoAsignado().getMail().equals(tecnicomailField.getText()))) ||
+                    
+                (ot.getTecnicoAsignado().getMail().equals(tecnicomailField.getText()) &&
+                    !(ot.getTecnicoAsignado().getNombre().equals(tecnicoField.getText())))){
+                JOptionPane.showMessageDialog(this, "Error: Verifique que el nombre y mail del técnico sean distintos a los ya existentes.");
+                return;
+            }
+            ot.setPrioridad(prioridadCombo.getSelectedItem().toString());
             ot.setEstado((EstadoOrden) estadoCombo.getSelectedItem());
-            ot.setTecnicoAsignado(new Tecnico(tecnicoField.getText()));
+            ot.setTecnicoAsignado(new Tecnico(tecnicoField.getText(), tecnicomailField.getText()));
             ot.setRecurso(recursoField.getText());
             otDAO.actualizarOT(ot);
             cargarOTs();

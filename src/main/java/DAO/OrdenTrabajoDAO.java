@@ -109,6 +109,32 @@ public class OrdenTrabajoDAO {
         }
         return null;
     }
+    
+    public OrdenTrabajo obtenerPorNumeroTramite(int numeroOT) {
+        String sql = "SELECT * FROM orden_trabajo WHERE numeroTramite = ?";
+        try (Connection conn = Conexion.getConexion(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, numeroOT);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new OrdenTrabajo(
+                        rs.getInt("numero"),
+                        rs.getInt("numeroTramite"),
+                        rs.getString("prioridad"),
+                        EstadoOrden.valueOf(rs.getString("estado")),
+                        rs.getString("responsable"),
+                        new Tecnico(rs.getString("tecnicoAsignado"), rs.getString("mailTecnico")),
+                        rs.getString("recurso"),
+                        rs.getString("problema"),
+                        rs.getDate("fechaAsignacion").toLocalDate(),
+                        rs.getDate("fechaFinalizacion") != null ? rs.getDate("fechaFinalizacion").toLocalDate() : null
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public void actualizarOT(OrdenTrabajo ot) {
         String sql = "UPDATE orden_trabajo SET prioridad = ?, estado = ?, tecnicoAsignado = ?, mailTecnico = ?, recurso = ?, problema = ? WHERE numero = ?";
@@ -126,31 +152,3 @@ public class OrdenTrabajoDAO {
         }
     }
 }
-
-
-
-
-    /*
-    public List<Nota> obtenerTodas() {
-        List<Nota> notas = new ArrayList<>();
-        String sql = "SELECT * FROM notas";
-        try (Connection conn = Conexion.getConexion(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                Nota nota = new Nota(
-                    rs.getInt("id"),
-                    rs.getString("descripcion"),
-                    rs.getString("area"),
-                    rs.getString("firmante"),
-                    rs.getString("mail"),
-                    rs.getString("tecnicoAsignado"),
-                    rs.getTimestamp("fecha").toLocalDateTime(),
-                    rs.getBoolean("justificada")
-                );
-                notas.add(nota);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return notas;
-    }
-    */

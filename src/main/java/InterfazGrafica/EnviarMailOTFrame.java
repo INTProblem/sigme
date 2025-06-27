@@ -19,7 +19,7 @@ public class EnviarMailOTFrame extends JFrame {
 
     public EnviarMailOTFrame() {
         setTitle("Enviar Email de Orden de Trabajo");
-        setSize(600, 400);
+        setSize(1000, 600);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
 
