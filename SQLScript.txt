@@ -46,3 +46,17 @@ INSERT INTO usuarios (username, password, rol) VALUES
 ('admin', 'admin123', 'ADMINISTRADOR'),
 ('zapella', 'prof123', 'RESPONSABLE'),
 ('perez', 'sup123', 'SUPERVISOR');
+
+CREATE TABLE IF NOT EXISTS tecnicos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE
+);
+
+INSERT INTO orden_trabajoos (nombre, email) VALUES
+('Juan Pérez', 'juan.perez@sigme.com'),
+('Ana Ruiz', 'ana.ruiz@sigme.com'),
+('Luis Torres', 'luis.torres@sigme.com');
+
+ALTER TABLE orden_trabajo ADD problema VARCHAR(100);
+ALTER TABLE orden_trabajo ADD mailTecnico VARCHAR(100);
