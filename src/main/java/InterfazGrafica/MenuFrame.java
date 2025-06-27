@@ -19,7 +19,7 @@ public class MenuFrame extends JFrame {
         JButton cargarNotaBtn = new JButton("Cargar Nota");
         cargarNotaBtn.addActionListener(e -> new CargarNotaFrame());
         add(cargarNotaBtn);
-        
+
         JButton generarOTBtn = new JButton("Generar OT desde Nota");
         generarOTBtn.addActionListener(e -> new GenerarOTFrame());
         add(generarOTBtn);
@@ -27,6 +27,10 @@ public class MenuFrame extends JFrame {
         JButton gestionarOTBtn = new JButton("Gestionar Órdenes de Trabajo");
         gestionarOTBtn.addActionListener(e -> new GestionarOTFrame());
         add(gestionarOTBtn);
+
+        JButton enviarMailBtn = new JButton("Generar Email de OT");
+        enviarMailBtn.addActionListener(e -> new EnviarMailOTFrame());
+        add(enviarMailBtn);
 
         setVisible(true);
     }

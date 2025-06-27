@@ -10,11 +10,12 @@ public class OrdenTrabajo {
     private String responsable;
     private Tecnico tecnicoAsignado;
     private String recurso;
+    private String problema;
     private LocalDate fechaAsignacion;
     private LocalDate fechaFinalizacion;
 
     public OrdenTrabajo(int numero, int numeroTramite, String prioridad, EstadoOrden estado,
-                        String responsable, Tecnico tecnicoAsignado, String recurso,
+                        String responsable, Tecnico tecnicoAsignado, String recurso,String problema,
                         LocalDate fechaAsignacion, LocalDate fechaFinalizacion) {
         this.numero = numero;
         this.numeroTramite = numeroTramite;
@@ -23,6 +24,7 @@ public class OrdenTrabajo {
         this.responsable = responsable;
         this.tecnicoAsignado = tecnicoAsignado;
         this.recurso = recurso;
+        this.problema = problema;
         this.fechaAsignacion = fechaAsignacion;
         this.fechaFinalizacion = fechaFinalizacion;
         
@@ -31,6 +33,16 @@ public class OrdenTrabajo {
      public OrdenTrabajo() {
   
     }
+
+    public String getProblema() {
+        return problema;
+    }
+
+    public void setProblema(String problema) {
+        this.problema = problema;
+    }
+     
+    
 
     public int getNumero() {
         return numero;

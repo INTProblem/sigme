@@ -11,7 +11,7 @@ import java.util.List;
 
 public class GenerarOTFrame extends JFrame {
     private JComboBox<Nota> notaCombo;
-    private JTextField prioridadField, problemaField, tecnicoField, mailtecnicoField;
+    private JTextField prioridadField, problemaField, tecnicoField, mailtecnicoField, recursoField;
 
     public GenerarOTFrame() {
         setTitle("Generar OT desde Nota");
@@ -33,6 +33,7 @@ public class GenerarOTFrame extends JFrame {
         problemaField = new JTextField();
         tecnicoField = new JTextField();
         mailtecnicoField = new JTextField();
+        recursoField = new JTextField();
 
         add(new JLabel("Seleccionar Nota Justificada:"));
         add(notaCombo);
@@ -42,6 +43,8 @@ public class GenerarOTFrame extends JFrame {
         add(tecnicoField);
         add(new JLabel("Mail del Técnico:")); 
         add(mailtecnicoField);
+        add(new JLabel("Recurso asociado:"));
+        add(recursoField);
         add(new JLabel("Problema asociado:"));
         add(problemaField);
 
@@ -76,14 +79,17 @@ public class GenerarOTFrame extends JFrame {
 
         Tecnico tecnico = new Tecnico(tecnicoNombre, tecnicoEmail);
 
+
+
         OrdenTrabajo ot = new OrdenTrabajo(
             0,
             nota.getId(),
             prioridadField.getText(),
             EstadoOrden.EVALUACION,
             nota.getFirmante(),
-            tecnico,
-            problemaField.getText(),
+            new Tecnico(tecnicoField.getText(), mailtecnicoField.getText()),
+            recursoField.getText(),        
+            nota.getDescripcion(),         
             LocalDate.now(),
             null
         );
@@ -91,12 +97,8 @@ public class GenerarOTFrame extends JFrame {
         OrdenTrabajoDAO dao = new OrdenTrabajoDAO();
         dao.insertarOT(ot);
 
-        // Enviar correo al técnico
-        String asunto = "Nueva Orden de Trabajo asignada";
-        String mensaje = "Hola " + tecnico.getNombre() + ",\n\nSe te ha asignado una nueva OT correspondiente al trámite Nº " + nota.getId() + ".";
-        EmailService.enviarCorreo(tecnico.getMail(), asunto, mensaje);
-
-        JOptionPane.showMessageDialog(this, "OT generada correctamente.\nCorreo enviado a " + tecnico.getMail());
+        
+        JOptionPane.showMessageDialog(this, "OT generada correctamente.");
         dispose();
     }
 }

@@ -44,7 +44,7 @@ public class GestionarOTFrame extends JFrame {
         tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(new Object[]{
             "N° OT", "Trámite", "Prioridad", "Estado", "Responsable",
-            "Técnico", "Problema", "Asignación", "Finalización"
+            "Técnico", "Problema", "Recurso", "Asignación", "Finalización"
         });
 
         table = new JTable(tableModel);
@@ -53,22 +53,8 @@ public class GestionarOTFrame extends JFrame {
 
         JPanel bottomPanel = new JPanel();
 
-/*        
-        JButton enProcesoBtn = new JButton("Marcar como EN PROCESO");
-        enProcesoBtn.addActionListener(e -> cambiarEstadoSeleccionado(EstadoOrden.EN_PROCESO));
-        bottomPanel.add(enProcesoBtn);
-
-        JButton finalizarBtn = new JButton("Marcar como FINALIZADO");
-        finalizarBtn.addActionListener(e -> cambiarEstadoSeleccionado(EstadoOrden.FINALIZADO));
-        bottomPanel.add(finalizarBtn);
-
-        JButton cancelarBtn = new JButton("Cancelar OT");
-        cancelarBtn.addActionListener(e -> cambiarEstadoSeleccionado(EstadoOrden.CANCELADO));
-        bottomPanel.add(cancelarBtn);
-*/
-
-        JButton modificarOTsBtn = new JButton("Modificar OTs");
-        modificarOTsBtn.addActionListener(e -> new ModificarOTFrame());
+        JButton modificarOTsBtn = new JButton("Modificar OT");
+        modificarOTsBtn.addActionListener(e -> modificarOT());
         bottomPanel.add(modificarOTsBtn);
 
         JButton eliminarCerradasBtn = new JButton("Eliminar OTs");
@@ -111,30 +97,59 @@ public class GestionarOTFrame extends JFrame {
             tableModel.addRow(new Object[]{
                 ot.getNumero(), ot.getNumeroTramite(), ot.getPrioridad(),
                 ot.getEstado().name(), ot.getResponsable(),
-                ot.getTecnicoAsignado().getNombre(), ot.getRecurso(),
-                ot.getFechaAsignacion(), ot.getFechaFinalizacion()
+                ot.getTecnicoAsignado().getNombre(), ot.getProblema(),
+                ot.getRecurso(), ot.getFechaAsignacion(), ot.getFechaFinalizacion()
             });
         }
     }
 
-    private void cambiarEstadoSeleccionado(EstadoOrden nuevoEstado) {
+    private void modificarOT() {
         int fila = table.getSelectedRow();
         if (fila == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione una OT primero.");
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una OT.");
             return;
         }
-        int numeroOT = (int) tableModel.getValueAt(fila, 0);
 
-        String observaciones = JOptionPane.showInputDialog(this, "Observaciones al cambiar estado a " + nuevoEstado.name() + ":");
-        if (observaciones != null && !observaciones.trim().isEmpty()) {
-            System.out.println("Observación registrada: " + observaciones); // Guardar o procesar según necesidad
+        String estadoActual = (String) tableModel.getValueAt(fila, 3);
+        if (estadoActual.equals("FINALIZADO") || estadoActual.equals("CANCELADO")) {
+            JOptionPane.showMessageDialog(this, "No se puede modificar una OT FINALIZADA o CANCELADA.");
+            return;
         }
 
-        otDAO.actualizarEstado(numeroOT, nuevoEstado.name());
-        cargarOTs();
-        JOptionPane.showMessageDialog(this, "Estado actualizado a " + nuevoEstado.name());
+        int numeroOT = (int) tableModel.getValueAt(fila, 0);
+        String prioridad = (String) tableModel.getValueAt(fila, 2);
+        String tecnico = (String) tableModel.getValueAt(fila, 5);
+        String recurso = (String) tableModel.getValueAt(fila, 7);
+
+        JPanel panel = new JPanel(new GridLayout(4, 2));
+        JTextField prioridadField = new JTextField(prioridad);
+        JComboBox<EstadoOrden> estadoCombo = new JComboBox<>(EstadoOrden.values());
+        estadoCombo.setSelectedItem(EstadoOrden.valueOf(estadoActual));
+        JTextField tecnicoField = new JTextField(tecnico);
+        JTextField recursoField = new JTextField(recurso);
+
+        panel.add(new JLabel("Nueva prioridad:"));
+        panel.add(prioridadField);
+        panel.add(new JLabel("Nuevo estado:"));
+        panel.add(estadoCombo);
+        panel.add(new JLabel("Técnico asignado:"));
+        panel.add(tecnicoField);
+        panel.add(new JLabel("Recurso asignado:"));
+        panel.add(recursoField);
+
+        int confirm = JOptionPane.showConfirmDialog(this, panel, "Modificar Orden de Trabajo", JOptionPane.OK_CANCEL_OPTION);
+        if (confirm == JOptionPane.OK_OPTION) {
+            OrdenTrabajo ot = otDAO.obtenerPorNumero(numeroOT);
+            ot.setPrioridad(prioridadField.getText());
+            ot.setEstado((EstadoOrden) estadoCombo.getSelectedItem());
+            ot.setTecnicoAsignado(new Tecnico(tecnicoField.getText()));
+            ot.setRecurso(recursoField.getText());
+            otDAO.actualizarOT(ot);
+            cargarOTs();
+            JOptionPane.showMessageDialog(this, "OT actualizada correctamente.");
+        }
     }
-    
+
     private void eliminarOTsCerradas() {
         int confirm = JOptionPane.showConfirmDialog(this, "¿Desea eliminar todas las OTs FINALIZADAS o CANCELADAS?", "Confirmar", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
