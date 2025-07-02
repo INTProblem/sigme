@@ -2,6 +2,7 @@ package InterfazGrafica;
 
 import DAO.NotaDAO;
 import DAO.OrdenTrabajoDAO;
+import modelo.EstadoOrden;
 import modelo.Nota;
 import modelo.OrdenTrabajo;
 import Servicios.EmailService;
@@ -86,15 +87,25 @@ public class EnviarMailOTFrame extends JFrame {
         }
 
         if (tecnicoRadio.isSelected()) {
-            destinatarioField.setText(ot.getTecnicoAsignado().getMail());
-        } else if (firmanteRadio.isSelected()) {
-            for (Nota nota : notas) {
-                if (nota.getId() == ot.getNumeroTramite()) {
-                    destinatarioField.setText(nota.getMail());
-                    return;
-                }
+            if (ot.getEstado() == EstadoOrden.EVALUACION) {
+                destinatarioField.setText(ot.getTecnicoAsignado().getMail());
+            } else {
+                JOptionPane.showMessageDialog(this, "Solo se puede enviar correo al técnico si la OT está en estado EVALUACION.");
+                destinatarioField.setText("");
             }
-            destinatarioField.setText(ot.getResponsable());
+        } else if (firmanteRadio.isSelected()) {
+            if (ot.getEstado() == EstadoOrden.FINALIZADO || ot.getEstado() == EstadoOrden.CANCELADO) {
+                for (Nota nota : notas) {
+                    if (nota.getId() == ot.getNumeroTramite()) {
+                        destinatarioField.setText(nota.getMail());
+                        return;
+                    }
+                }
+                destinatarioField.setText(ot.getResponsable());
+            } else {
+                JOptionPane.showMessageDialog(this, "Solo se puede enviar correo al firmante si la OT está FINALIZADA o CANCELADA.");
+                destinatarioField.setText("");
+            }
         }
     }
 
@@ -112,4 +123,5 @@ public class EnviarMailOTFrame extends JFrame {
         JOptionPane.showMessageDialog(this, "Correo enviado exitosamente.");
         dispose();
     }
-}
+} 
+
