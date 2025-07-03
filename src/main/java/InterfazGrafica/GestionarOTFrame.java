@@ -1,10 +1,11 @@
 package InterfazGrafica;
 
-import DAO.OrdenTrabajoDAO;
+import DAO.*;
 import modelo.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +16,7 @@ public class GestionarOTFrame extends JFrame {
     private JComboBox<String> filtroEstadoCombo;
     private JComboBox<String> filtroPrioridadCombo;
     private OrdenTrabajoDAO otDAO = new OrdenTrabajoDAO();
+    private TecnicoDAO tecnicoDAO = new TecnicoDAO();
 
     public GestionarOTFrame() {
         setTitle("Gestión de Órdenes de Trabajo");
@@ -94,11 +96,15 @@ public class GestionarOTFrame extends JFrame {
         }));
 
         for (OrdenTrabajo ot : ots) {
+            String fechaFinal = "";
+            if (ot.getEstado() == EstadoOrden.FINALIZADO || ot.getEstado() == EstadoOrden.CANCELADO) {
+                fechaFinal = ot.getFechaFinalizacion() != null ? ot.getFechaFinalizacion().toString() : "";
+            }
             tableModel.addRow(new Object[]{
                 ot.getNumero(), ot.getNumeroTramite(), ot.getPrioridad(),
                 ot.getEstado().name(), ot.getResponsable(),
                 ot.getTecnicoAsignado().getNombre(), ot.getProblema(),
-                ot.getRecurso(), ot.getFechaAsignacion(), ot.getFechaFinalizacion()
+                ot.getRecurso(), ot.getFechaAsignacion(), fechaFinal
             });
         }
     }
@@ -117,54 +123,45 @@ public class GestionarOTFrame extends JFrame {
         }
 
         int numeroOT = (int) tableModel.getValueAt(fila, 0);
-        
         String prioridad = (String) tableModel.getValueAt(fila, 2);
-        String tecnico = (String) tableModel.getValueAt(fila, 5);
-        String recurso = (String) tableModel.getValueAt(fila, 7);
+        OrdenTrabajo ot = otDAO.obtenerPorNumero(numeroOT);
 
         JPanel panel = new JPanel(new GridLayout(5, 2));
-        JComboBox prioridadCombo = new JComboBox();
-        prioridadCombo.addItem("Alta");
-        prioridadCombo.addItem("Media");
-        prioridadCombo.addItem("Baja");
+        JComboBox<String> prioridadCombo = new JComboBox<>(new String[]{"Alta", "Media", "Baja"});
         prioridadCombo.setSelectedItem(prioridad);
         JComboBox<EstadoOrden> estadoCombo = new JComboBox<>(EstadoOrden.values());
         estadoCombo.setSelectedItem(EstadoOrden.valueOf(estadoActual));
-        JTextField tecnicoField = new JTextField(tecnico);
-        
-        OrdenTrabajo ot = otDAO.obtenerPorNumero(numeroOT);
-        JTextField tecnicomailField = new JTextField(ot.getTecnicoAsignado().getMail());
-        JTextField recursoField = new JTextField(recurso);
+
+        JComboBox<Tecnico> tecnicoCombo = new JComboBox<>();
+        for (Tecnico t : tecnicoDAO.obtenerTodos()) {
+            tecnicoCombo.addItem(t);
+        }
+        tecnicoCombo.setSelectedItem(ot.getTecnicoAsignado());
+
+        JTextField recursoField = new JTextField(ot.getRecurso());
 
         panel.add(new JLabel("Nueva prioridad:"));
         panel.add(prioridadCombo);
         panel.add(new JLabel("Nuevo estado:"));
         panel.add(estadoCombo);
         panel.add(new JLabel("Técnico asignado:"));
-        panel.add(tecnicoField);
-        panel.add(new JLabel("Mail del técnico:"));
-        panel.add(tecnicomailField);
+        panel.add(tecnicoCombo);
         panel.add(new JLabel("Recurso asignado:"));
         panel.add(recursoField);
 
         int confirm = JOptionPane.showConfirmDialog(this, panel, "Modificar Orden de Trabajo", JOptionPane.OK_CANCEL_OPTION);
         if (confirm == JOptionPane.OK_OPTION) {
-            /*
-                Si el nombre viejo y el nombre nuevo son iguales, pero los mails son distintos,
-                o si bien los mails son iguales pero los nombres son distintos,
-                no hay que permitir avanzar, puesto que hay que relacionar el nombre con el mail correctamente.
-            */
-            if((ot.getTecnicoAsignado().getNombre().equals(tecnicoField.getText()) &&
-                    !(ot.getTecnicoAsignado().getMail().equals(tecnicomailField.getText()))) ||
-                    
-                (ot.getTecnicoAsignado().getMail().equals(tecnicomailField.getText()) &&
-                    !(ot.getTecnicoAsignado().getNombre().equals(tecnicoField.getText())))){
-                JOptionPane.showMessageDialog(this, "Error: Verifique que el nombre y mail del técnico sean distintos a los ya existentes.");
-                return;
+            Tecnico nuevoTecnico = (Tecnico) tecnicoCombo.getSelectedItem();
+            if (!nuevoTecnico.equals(ot.getTecnicoAsignado())) {
+                if (nuevoTecnico.getNombre().equals(ot.getTecnicoAsignado().getNombre()) ^ nuevoTecnico.getMail().equals(ot.getTecnicoAsignado().getMail())) {
+                    JOptionPane.showMessageDialog(this, "Error: Verifique que el nombre y mail del técnico estén correctamente relacionados.");
+                    return;
+                }
             }
+
             ot.setPrioridad(prioridadCombo.getSelectedItem().toString());
             ot.setEstado((EstadoOrden) estadoCombo.getSelectedItem());
-            ot.setTecnicoAsignado(new Tecnico(tecnicoField.getText(), tecnicomailField.getText()));
+            ot.setTecnicoAsignado(nuevoTecnico);
             ot.setRecurso(recursoField.getText());
             otDAO.actualizarOT(ot);
             cargarOTs();
@@ -173,11 +170,14 @@ public class GestionarOTFrame extends JFrame {
     }
 
     private void eliminarOTsCerradas() {
-        int confirm = JOptionPane.showConfirmDialog(this, "¿Desea eliminar todas las OTs FINALIZADAS o CANCELADAS?", "Confirmar", JOptionPane.YES_NO_OPTION);
+        List<OrdenTrabajo> todas = otDAO.obtenerTodas();
+        long cantidad = todas.stream().filter(ot -> ot.getEstado() == EstadoOrden.FINALIZADO || ot.getEstado() == EstadoOrden.CANCELADO).count();
+
+        int confirm = JOptionPane.showConfirmDialog(this, "¿Desea eliminar las " + cantidad + " OTs FINALIZADAS o CANCELADAS?", "Confirmar", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             otDAO.eliminarFinalizadasOCanceladas();
             cargarOTs();
-            JOptionPane.showMessageDialog(this, "Órdenes finalizadas o canceladas eliminadas.");
+            JOptionPane.showMessageDialog(this, "Se eliminaron " + cantidad + " órdenes finalizadas o canceladas.");
         }
     }
 }

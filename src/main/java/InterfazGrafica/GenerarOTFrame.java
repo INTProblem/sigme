@@ -11,7 +11,9 @@ import java.util.List;
 
 public class GenerarOTFrame extends JFrame {
     private JComboBox<Nota> notaCombo;
-    private JTextField prioridadField, problemaField, tecnicoField, mailtecnicoField, recursoField;
+    private JComboBox<String> prioridadCombo;
+    private JComboBox<Tecnico> tecnicoCombo;
+    private JTextField problemaField, mailtecnicoField, recursoField;
 
     public GenerarOTFrame() {
         setTitle("Generar OT desde Nota");
@@ -21,35 +23,37 @@ public class GenerarOTFrame extends JFrame {
 
         NotaDAO notaDAO = new NotaDAO();
         OrdenTrabajoDAO otDAO = new OrdenTrabajoDAO();
+        TecnicoDAO tecnicoDAO = new TecnicoDAO();
+
         List<Nota> notas = notaDAO.obtenerTodas();
+        List<Tecnico> tecnicos = tecnicoDAO.obtenerTodos();
 
         notaCombo = new JComboBox<>();
         for (Nota nota : notas) {
-            /*
-            Si la nota está justificada,
-            y si la nota no tiene una OT relacionada a ella.
-            
-            Quiere decir que si busco en la BD por una OT con el ID de nota, no debería aparecer.
-            
-            */
             if (nota.isJustificada() && otDAO.obtenerPorNumeroTramite(nota.getId()) == null) {
                 notaCombo.addItem(nota);
             }
         }
 
-        prioridadField = new JTextField();
+        prioridadCombo = new JComboBox<>(new String[]{"Alta", "Media", "Baja"});
+        tecnicoCombo = new JComboBox<>();
+        for (Tecnico tecnico : tecnicos) {
+            tecnicoCombo.addItem(tecnico);
+        }
+
         problemaField = new JTextField();
-        tecnicoField = new JTextField();
         mailtecnicoField = new JTextField();
         recursoField = new JTextField();
 
+        mailtecnicoField.setEditable(false);
+
         add(new JLabel("Seleccionar Nota Justificada:"));
         add(notaCombo);
-        add(new JLabel("Prioridad (Alta/Media/Baja):"));
-        add(prioridadField);
-        add(new JLabel("Técnico asignado:")); 
-        add(tecnicoField);
-        add(new JLabel("Mail del Técnico:")); 
+        add(new JLabel("Prioridad:"));
+        add(prioridadCombo);
+        add(new JLabel("Técnico asignado:"));
+        add(tecnicoCombo);
+        add(new JLabel("Mail del Técnico:"));
         add(mailtecnicoField);
         add(new JLabel("Recurso asociado:"));
         add(recursoField);
@@ -59,45 +63,47 @@ public class GenerarOTFrame extends JFrame {
         JButton generarBtn = new JButton("Generar OT");
         generarBtn.addActionListener(e -> generarOT());
         add(generarBtn);
+
         notaCombo.addActionListener(e -> mostrarInfo());
+        tecnicoCombo.addActionListener(e -> actualizarMailTecnico());
+
         setVisible(true);
     }
 
-    private void mostrarInfo(){
+    private void mostrarInfo() {
         Nota nota = (Nota) notaCombo.getSelectedItem();
         if (nota != null) {
             problemaField.setText(nota.getDescripcion());
         }
     }
 
+    private void actualizarMailTecnico() {
+        Tecnico tecnico = (Tecnico) tecnicoCombo.getSelectedItem();
+        if (tecnico != null) {
+            mailtecnicoField.setText(tecnico.getMail());
+        }
+    }
+
     private void generarOT() {
         Nota nota = (Nota) notaCombo.getSelectedItem();
-        if (nota == null) {
-            JOptionPane.showMessageDialog(this, "Seleccione una nota válida.");
+        String prioridad = (String) prioridadCombo.getSelectedItem();
+        Tecnico tecnico = (Tecnico) tecnicoCombo.getSelectedItem();
+        String recurso = recursoField.getText();
+
+        if (nota == null || prioridad == null || tecnico == null || recurso.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Debe completar todos los campos y seleccionar valores válidos.");
             return;
         }
-
-        String tecnicoNombre = tecnicoField.getText();
-        String tecnicoEmail = mailtecnicoField.getText();
-
-        if (tecnicoNombre.isBlank() || tecnicoEmail.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Complete el nombre y correo del técnico.");
-            return;
-        }
-
-        Tecnico tecnico = new Tecnico(tecnicoNombre, tecnicoEmail);
-
-
 
         OrdenTrabajo ot = new OrdenTrabajo(
             0,
             nota.getId(),
-            prioridadField.getText(),
+            prioridad,
             EstadoOrden.EVALUACION,
             nota.getFirmante(),
-            new Tecnico(tecnicoField.getText(), mailtecnicoField.getText()),
-            recursoField.getText(),        
-            nota.getDescripcion(),         
+            tecnico,
+            recurso,
+            nota.getDescripcion(),
             LocalDate.now(),
             null
         );
@@ -105,7 +111,6 @@ public class GenerarOTFrame extends JFrame {
         OrdenTrabajoDAO dao = new OrdenTrabajoDAO();
         dao.insertarOT(ot);
 
-        
         JOptionPane.showMessageDialog(this, "OT generada correctamente.");
         dispose();
     }

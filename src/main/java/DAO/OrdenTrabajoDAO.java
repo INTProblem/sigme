@@ -63,7 +63,11 @@ public class OrdenTrabajoDAO {
         String sql = "UPDATE orden_trabajo SET estado = ?, fechaFinalizacion = ? WHERE numero = ?";
         try (Connection conn = Conexion.getConexion(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nuevoEstado);
-            stmt.setDate(2, Date.valueOf(LocalDate.now()));
+            if (nuevoEstado.equals("FINALIZADO") || nuevoEstado.equals("CANCELADO")) {
+                stmt.setDate(2, Date.valueOf(LocalDate.now()));
+            } else {
+                stmt.setNull(2, Types.DATE);
+            }
             stmt.setInt(3, numeroOT);
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -109,7 +113,7 @@ public class OrdenTrabajoDAO {
         }
         return null;
     }
-    
+
     public OrdenTrabajo obtenerPorNumeroTramite(int numeroOT) {
         String sql = "SELECT * FROM orden_trabajo WHERE numeroTramite = ?";
         try (Connection conn = Conexion.getConexion(); PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -137,7 +141,7 @@ public class OrdenTrabajoDAO {
     }
 
     public void actualizarOT(OrdenTrabajo ot) {
-        String sql = "UPDATE orden_trabajo SET prioridad = ?, estado = ?, tecnicoAsignado = ?, mailTecnico = ?, recurso = ?, problema = ? WHERE numero = ?";
+        String sql = "UPDATE orden_trabajo SET prioridad = ?, estado = ?, tecnicoAsignado = ?, mailTecnico = ?, recurso = ?, problema = ?, fechaFinalizacion = ? WHERE numero = ?";
         try (Connection conn = Conexion.getConexion(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, ot.getPrioridad());
             stmt.setString(2, ot.getEstado().name());
@@ -145,7 +149,12 @@ public class OrdenTrabajoDAO {
             stmt.setString(4, ot.getTecnicoAsignado().getMail());
             stmt.setString(5, ot.getRecurso());
             stmt.setString(6, ot.getProblema());
-            stmt.setInt(7, ot.getNumero());
+            if (ot.getEstado() == EstadoOrden.FINALIZADO || ot.getEstado() == EstadoOrden.CANCELADO) {
+                stmt.setDate(7, Date.valueOf(LocalDate.now()));
+            } else {
+                stmt.setNull(7, Types.DATE);
+            }
+            stmt.setInt(8, ot.getNumero());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
