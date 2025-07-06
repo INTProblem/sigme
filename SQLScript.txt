@@ -1,6 +1,6 @@
 -- Crear base de datos
-CREATE DATABASE IF NOT EXISTS sigme2;
-USE sigme2;
+CREATE DATABASE IF NOT EXISTS sigme;
+USE sigme;
 
 -- Tabla de usuarios
 CREATE TABLE IF NOT EXISTS usuarios (
